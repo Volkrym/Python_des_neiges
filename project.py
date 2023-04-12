@@ -172,7 +172,7 @@ def deplacer_gauche():
     :return: rien
     """
     global matrice_global, position_globale
-    turtle.onkeypress(None, "Left")
+    turtle.onkeypress(None, "Left")       #désactive la touche pour éviter d'aller à gauche indéfiniment
     deplacer(matrice_global, position_globale, (-1, 0))
     turtle.onkeypress(deplacer_gauche, "Left")
 
