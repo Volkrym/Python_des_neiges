@@ -12,7 +12,7 @@ def lire_matrice(fichier):
             matrice.append([int(x) for x in ligne.strip().split()])
     return matrice
 
-matrice_global = lire_matrice("plan_chateau.txt")
+matrice_global = lire_matrice(fichier_plan)
 
 def calculer_pas(matrice):
     width_window = ZONE_PLAN_MAXI[0] - ZONE_PLAN_MINI[0]
@@ -63,10 +63,10 @@ def afficher_plan(matrice):
     turtle.goto(POINT_AFFICHAGE_INVENTAIRE)
     turtle.down()
     turtle.color("black")
-    turtle.write("Inventaire :", font=('Calibri', 15, "bold"))
+    turtle.write("Inventaire :", font=('Arial', 15, "bold"))
     turtle.up()
     turtle.goto(POINT_AFFICHAGE_ANNONCES)
-    turtle.write("Vous devez mener le point rouge à la sortie jaune", font=('Calibri',15,"bold"))
+    turtle.write("Vous devez mener le point rouge à la sortie jaune", font=('Arial',15,"bold"))
 
     for i in range(len(matrice)):
         for j in range(len(matrice[0])):
@@ -95,17 +95,28 @@ def create_character(position):
     turtle.dot(pas_global * RATIO_PERSONNAGE, COULEUR_PERSONNAGE)
 
 position_globale = (1, 0)
-
+correct = False
 def deplacer(matrice, position, mouvement):
-    global position_globale
+    global position_globale, correct
     new_position = (position[0] + mouvement[0], position[1] + mouvement[1])
-    if matrice[new_position[1]][new_position[0]] != 1:
+    if matrice[new_position[1]][new_position[0]] == 3:
+        correct = False
+        poser_question(matrice_global,position_globale, mouvement)
+        turtle.listen()
+        if correct == True:
+            tracer_case(position, "wheat", pas_global)
+            create_character(new_position)
+            position_globale = new_position
+
+
+    elif matrice[new_position[1]][new_position[0]] != 1:
         tracer_case(position, "wheat", pas_global)
         create_character(new_position)
         position_globale = new_position
         if matrice[new_position[1]][new_position[0]] == 4:
             ramasser_objet()
-
+        if matrice[new_position[1]][new_position[0]] == 2:
+            win()
 
 
 def deplacer_gauche():
@@ -174,11 +185,56 @@ def ramasser_objet():
     turtle.goto(POINT_AFFICHAGE_ANNONCES)
     turtle.down()
     turtle.color("black")
-    turtle.write("Vous avez trouvé : " + item_dico[new_position_globale], font=('Calibri', 15, "bold"))
+    turtle.write("Vous avez trouvé : " + item_dico[new_position_globale], font=('Arial', 15, "bold"))
     turtle.up()
     new_object += 1
     turtle.goto(POINT_AFFICHAGE_INVENTAIRE[0], POINT_AFFICHAGE_INVENTAIRE[1] - new_object * 2 *pas_global)
-    turtle.write("n°" + str(new_object) + " : " +item_dico[new_position_globale], font=('Calibri', 12, "bold"))
+    turtle.write("n°" + str(new_object) + " : " + item_dico[new_position_globale], font=('Arial', 12, "bold"))
+
+
+########################################################################################################################
+##############################################     Partie  4    ########################################################
+########################################################################################################################
+
+
+quiz_dico = creer_dictionnaire_des_objets(fichier_questions)
+
+def poser_question(matrice, case, mouvement):
+    global correct
+    emplacement = (case[1] + mouvement[1], case[0] + mouvement[0])
+    erase_event()
+    turtle.goto(POINT_AFFICHAGE_ANNONCES)
+    turtle.color("black")
+    turtle.down()
+    turtle.write("Cette porte est fermée.", font=('Arial', 12, "bold"))
+    answer = turtle.textinput("Question :", quiz_dico[emplacement][0])
+    if answer == quiz_dico[emplacement][1]:
+        matrice[emplacement[0]][emplacement[1]] = 0
+        correct = True
+        erase_event()
+        turtle.goto(POINT_AFFICHAGE_ANNONCES)
+        turtle.color("black")
+        turtle.down()
+        turtle.write("Bonne réponse, La porte s'ouvre.", font=('Arial', 12, "bold"))
+    else:
+        erase_event()
+        turtle.goto(POINT_AFFICHAGE_ANNONCES)
+        turtle.color("black")
+        turtle.down()
+        turtle.write("Mauvaise Réponse, La porte reste fermée.", font=('Arial', 12, "bold"))
+
+
+def win():
+    turtle.onkeypress(None, "Up")
+    turtle.onkeypress(None, "Down")
+    turtle.onkeypress(None, "Right")
+    turtle.onkeypress(None, "Left")
+    erase_event()
+    turtle.goto(POINT_AFFICHAGE_ANNONCES)
+    turtle.color("black")
+    turtle.down()
+    turtle.write("Victoire !", font=('Arial', 20, "bold"))
+
 
 
 turtle.listen()    # Déclenche l’écoute du clavier
