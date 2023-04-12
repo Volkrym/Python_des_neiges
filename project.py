@@ -172,7 +172,7 @@ def deplacer_gauche():
     :return: rien
     """
     global matrice_global, position_globale
-    turtle.onkeypress(None, "Left")       #désactive la touche pour éviter d'aller à gauche indéfiniment
+    turtle.onkeypress(None, "Left")         #désactive la touche pour éviter d'aller à gauche indéfiniment
     deplacer(matrice_global, position_globale, (-1, 0))
     turtle.onkeypress(deplacer_gauche, "Left")
 
@@ -231,7 +231,7 @@ def erase_event():
     :return:rien
     """
     turtle.up()
-    turtle.goto(POINT_AFFICHAGE_ANNONCES)
+    turtle.goto(POINT_AFFICHAGE_ANNONCES[0]-10,POINT_AFFICHAGE_ANNONCES[1])
     turtle.color(COULEUR_CASES)
     turtle.down()
     turtle.begin_fill()
@@ -314,7 +314,6 @@ def win():
     turtle.onkeypress(None, "Right")
     turtle.onkeypress(None, "Left")
     erase_event()
-    turtle.up()
     turtle.goto(POINT_AFFICHAGE_ANNONCES)
     turtle.color("black")
     turtle.down()
